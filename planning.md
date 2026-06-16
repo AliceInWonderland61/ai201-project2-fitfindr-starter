@@ -220,8 +220,28 @@ User query (natural language)
      before trusting it" is a plan. -->
 
 **Milestone 3 — Individual tool implementations:**
+For `search_listings`: I'll give Claude the Tool 1 spec block from this file (inputs, size-matching rule, return value, failure mode) plus the
+`load_listings()` signature from `data_loader.py`. I'll ask it to implement the function with case-insensitive substring size matching, style tag overlap
+scoring, and a hard cap of 3 results. Before using the output I'll verify: (1) all three filters are applied, (2) results are sorted by tag overlap
+descending, (3) the function returns `[]` on no match rather than raising.
+I'll test with three queries: one that returns results, one with a price ceiling too low to match anything, and one where size only matches via
+substring (`"M"` catching `"S/M"`).
+
+For `suggest_outfit`: I'll give Claude the Tool 2 spec block plus the wardrobeschema from `wardrobe_schema.json`. I'll ask it to find wardrobe items whose
+`style_tags` overlap with the new item's tags and return a single outfit string with one specific styling tip. I'll verify it handles the empty wardrobe
+branch correctly (pauses, does not crash, does not call `create_fit_card`) and that the return value is a plain string.
+
+For `create_fit_card`: I'll give Claude the Tool 3 spec block and two example outputs from the Complete Interaction section below. I'll ask it to generate
+a lowercase, first-person caption under 3 sentences that references the item's `price` and `platform`. I'll verify the tone matches the examples and that
+different inputs produce meaningfully different captions.
+
 
 **Milestone 4 — Planning loop and state management:**
+
+I'll give Claude the Architecture diagram and the State Management paragraph from this file. I'll ask it to implement a `run_agent(query, wardrobe)`
+function that initializes the session dict, calls tools in the documented order, checks each branch condition, and returns the full session at the end.
+I'll verify by running the complete interaction walkthrough below end-to-end and confirming the session contains the correct keys (`selected_item`,
+`outfit`, `fit_card`) after each step.
 
 ---
 
